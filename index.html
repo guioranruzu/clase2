@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Clase 2: Medios de Transmisión - Redes de Datos</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+
+    <!-- Estilos impresión / PDF -->
+    <script>
+      (function () {
+        const isPdf = /print-pdf/gi.test(window.location.search);
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.type = "text/css";
+        link.href = isPdf
+          ? "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/css/print/pdf.min.css"
+          : "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/css/print/paper.min.css";
+        document.head.appendChild(link);
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Commissioner:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --ink: #0b1020;
+        --paper: #f7f3ea;
+        --sea: #0ea5e9;
+        --signal: #ffd166;
+        --violet: #7c3aed;
+        --ok: #22c55e;
+        --bad: #ef4444;
+
+        --card: rgba(255, 255, 255, 0.9);
+        --card-border: rgba(11, 16, 32, 0.12);
+        --shadow: 0 22px 70px rgba(11, 16, 32, 0.18);
+      }
+
+      .reveal {
+        font-family: "Commissioner", system-ui, -apple-system, sans-serif;
+        font-size: 28px; /* subir escala general de la presentación */
+        background: radial-gradient(
+            1200px 800px at 10% 15%,
+            rgba(14, 165, 233, 0.18),
+            transparent 55%
+          ),
+          radial-gradient(
+            900px 700px at 88% 22%,
+            rgba(124, 58, 237, 0.16),
+            transparent 55%
+          ),
+          radial-gradient(
+            900px 700px at 40% 95%,
+            rgba(255, 209, 102, 0.18),
+            transparent 55%
+          ),
+          linear-gradient(180deg, var(--paper), #ffffff);
+        color: var(--ink);
+      }
+
+      .reveal h1,
+      .reveal h2,
+      .reveal h3 {
+        font-family: "Fraunces", serif;
+        text-transform: none;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+
+      .reveal h1 {
+        font-size: 2.4em;
+      }
+      .reveal h2 {
+        font-size: 1.9em;
+      }
+
+      .reveal p,
+      .reveal li {
+        font-size: 0.85em;
+        line-height: 1.4;
+      }
+
+      .kicker {
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 0.48em;
+        color: rgba(11, 16, 32, 0.65);
+      }
+
+      .brandbar {
+        position: fixed;
+        inset: auto 0 0 0;
+        height: 10px;
+        background: linear-gradient(90deg, var(--sea), var(--signal), var(--violet));
+        z-index: 10;
+        opacity: 0.9;
+      }
+
+      .topmeta {
+        position: fixed;
+        top: 20px;
+        right: 24px;
+        z-index: 10;
+        font-size: 12px;
+        color: rgba(11, 16, 32, 0.65);
+        text-align: right;
+        line-height: 1.2;
+        letter-spacing: 0.02em;
+      }
+
+      .deck-actions {
+        position: fixed;
+        left: 24px;
+        top: 20px;
+        z-index: 10;
+        display: flex;
+        gap: 10px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(11, 16, 32, 0.12);
+        background: rgba(255, 255, 255, 0.66);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(11, 16, 32, 0.08);
+        color: rgba(11, 16, 32, 0.86);
+        font-size: 12px;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.12s ease, background 0.12s ease;
+      }
+      .chip:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.85);
+      }
+      .chip strong {
+        font-weight: 800;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        padding: 22px 26px;
+        box-shadow: var(--shadow);
+      }
+
+      .card-visual {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.9fr);
+        gap: 18px;
+        align-items: center;
+      }
+      .card-visual img,
+      .card-visual video {
+        max-width: 100%;
+        border-radius: 16px;
+        box-shadow: 0 18px 50px rgba(11, 16, 32, 0.28);
+      }
+
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(14, 165, 233, 0.12);
+        color: rgba(11, 16, 32, 0.82);
+        border: 1px solid rgba(14, 165, 233, 0.22);
+        font-weight: 700;
+        font-size: 0.6em;
+      }
+
+      .accent {
+        height: 6px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--sea), var(--signal), var(--violet));
+        width: 180px;
+        margin: 14px 0 18px;
+      }
+
+      .big-quote {
+        font-family: "Fraunces", serif;
+        font-size: 1.3em;
+        line-height: 1.15;
+      }
+
+      .callout {
+        border-left: 7px solid var(--signal);
+        padding: 16px 18px;
+        border-radius: 14px;
+        background: rgba(255, 209, 102, 0.16);
+        border: 1px solid rgba(255, 209, 102, 0.28);
+      }
+
+      .mini {
+        font-size: 0.7em;
+        color: rgba(11, 16, 32, 0.72);
+      }
+
+      .cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .taglist {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .tag {
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(11, 16, 32, 0.12);
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 0.6em;
+        font-weight: 700;
+      }
+
+      .timeline {
+        display: grid;
+        gap: 10px;
+      }
+      .time-item {
+        display: grid;
+        grid-template-columns: 70px 1fr;
+        gap: 10px;
+        align-items: center;
+      }
+      .time-dot {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.16), rgba(124, 58, 237, 0.16));
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        font-size: 18px;
+        color: rgba(11, 16, 32, 0.92);
+        box-shadow: 0 12px 30px rgba(11, 16, 32, 0.12);
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .chip-sm {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(14, 165, 233, 0.1);
+        border: 1px solid rgba(14, 165, 233, 0.26);
+        font-size: 0.58em;
+        font-weight: 700;
+      }
+
+      .quiz {
+        display: grid;
+        gap: 14px;
+      }
+      .quiz .q {
+        font-weight: 900;
+      }
+      .opts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .opt {
+        border-radius: 16px;
+        border: 1px solid rgba(11, 16, 32, 0.14);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 14px 14px;
+        cursor: pointer;
+        transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+        font-weight: 800;
+        font-size: 0.7em;
+        text-align: left;
+      }
+      .opt:hover {
+        transform: translateY(-1px);
+        border-color: rgba(14, 165, 233, 0.5);
+        background: #ffffff;
+      }
+      .opt small {
+        display: block;
+        margin-top: 6px;
+        font-weight: 600;
+        color: rgba(11, 16, 32, 0.68);
+      }
+
+      .result {
+        display: none;
+        border-radius: 16px;
+        padding: 14px 16px;
+        border: 1px solid rgba(11, 16, 32, 0.12);
+      }
+
+      /* Quiz final de 10 preguntas */
+      .mega-quiz {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 22px;
+        align-items: flex-start;
+      }
+      .mq-list {
+        display: grid;
+        gap: 12px;
+      }
+      .mq-question {
+        border-radius: 16px;
+        border: 1px solid rgba(11, 16, 32, 0.12);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 14px 18px;
+      }
+      .mq-qtext {
+        font-weight: 800;
+        margin-bottom: 8px;
+        font-size: 0.8em;
+      }
+      .mq-options {
+        display: grid;
+        gap: 6px;
+      }
+      .mq-option {
+        border-radius: 999px;
+        border: 1px solid rgba(11, 16, 32, 0.15);
+        padding: 6px 12px;
+        font-size: 0.75em;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.9);
+        transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+      }
+      .mq-option:hover {
+        transform: translateY(-1px);
+        border-color: rgba(14, 165, 233, 0.6);
+      }
+      .mq-option.correct {
+        background: rgba(34, 197, 94, 0.14);
+        border-color: rgba(34, 197, 94, 0.9);
+        color: #14532d;
+      }
+      .mq-option.incorrect {
+        background: rgba(239, 68, 68, 0.14);
+        border-color: rgba(239, 68, 68, 0.9);
+        color: #7f1d1d;
+      }
+      .mq-feedback {
+        margin-top: 6px;
+        font-size: 0.68em;
+        color: rgba(11, 16, 32, 0.72);
+      }
+
+      .only-screen {
+        display: block;
+      }
+      .only-print {
+        display: block;
+      }
+
+      @media print {
+        .only-screen {
+          display: none !important;
+        }
+        .only-print {
+          display: block !important;
+        }
+      }
+
+      /* Usar casi toda la pantalla útil de Reveal */
+      .reveal .slides {
+        width: 100%;
+        height: 100%;
+      }
+      .reveal .slides section {
+        width: 100%;
+        height: 100%;
+        padding: 32px 60px;
+        box-sizing: border-box;
+      }
+
+      @media print {
+        .brandbar,
+        .topmeta,
+        .deck-actions {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="deck-actions">
+      <button
+        class="chip"
+        id="btnPdf"
+        type="button"
+        title="Abre la vista lista para imprimir / exportar a PDF"
+      >
+        <strong>PDF</strong> Exportar
+      </button>
+      <button class="chip" id="btnHelp" type="button" title="Atajos rápidos">
+        <strong>?</strong> Ayuda
+      </button>
+    </div>
+    <div class="topmeta">
+      Redes de Datos · ICC304<br />
+      Clase 2 · Medios de Transmisión
+    </div>
+    <div class="brandbar"></div>
+
+    <div class="reveal">
+      <div class="slides">
+        <!-- Portada -->
+        <section>
+          <div class="kicker">Redes de Datos · Clase 2</div>
+          <h1>Medios de Transmisión</h1>
+          <div class="accent"></div>
+          <div class="grid2">
+            <div class="card">
+              <div class="pill">Objetivo de hoy</div>
+              <p class="big-quote" style="margin-top: 12px">
+                Que puedas <b>elegir, instalar y diagnosticar</b> un medio de transmisión
+                (cobre, fibra, inalámbrico) como si estuvieras en terreno.
+              </p>
+              <div class="callout" style="margin-top: 16px">
+                Hoy bajamos al <b>mundo físico</b>:
+                UTP/STP, fibra monomodo y multimodo, racks, patch panel, EIA/TIA 568,
+                enlaces inalámbricos y <b>taller de armado de cables RJ‑45</b>.
+              </div>
+            </div>
+            <div class="card">
+              <div class="pill">Mapa de la clase</div>
+              <ul style="margin-top: 12px">
+                <li class="fragment">Panorama general de medios (cobre · fibra · wireless)</li>
+                <li class="fragment">Cobre: UTP/STP, cableado horizontal y vertical</li>
+                <li class="fragment">Estándares EIA/TIA 568 A/B, cables derecho y cruzado</li>
+                <li class="fragment">Fibra óptica: monomodo, multimodo, distancias y conectores</li>
+                <li class="fragment">Enlaces inalámbricos: WiFi, microondas, HF</li>
+                <li class="fragment">Taller: creación de cables RJ‑45 + certificación básica</li>
+              </ul>
+              <p class="mini" style="margin-top: 12px">
+                Navegación: flechas · Espacio · <b>S</b> notas del presentador.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panorama general -->
+        <section>
+          <div class="kicker">Panorama</div>
+          <h2>Los tres grandes tipos de medios</h2>
+          <div class="accent"></div>
+          <div class="card card-visual">
+            <div>
+              <h3 style="margin-top: 0">Clasificación general</h3>
+              <ul>
+                <li class="fragment">
+                  <b>Guiados metálicos</b>: par trenzado y cable coaxial.
+                </li>
+                <li class="fragment">
+                  <b>Guiados no metálicos</b>: fibra óptica (mono / multimodo).
+                </li>
+                <li class="fragment">
+                  <b>No guiados</b>: radio, microondas, satelital, infrarrojo, LoRa.
+                </li>
+              </ul>
+              <p class="mini" style="margin-top: 10px">
+                Pregunta rápida:
+                <b>¿tu conexión de casa usa cobre, fibra o aire… o una mezcla?</b>
+              </p>
+              <div class="quiz mini" data-quiz-id="panorama">
+                <div class="q">El WiFi que usas en tu notebook es un medio…</div>
+                <div class="opts">
+                  <button class="opt" data-answer="ok" type="button">
+                    Guiado
+                    <small>Va por un conductor físico (cobre o fibra).</small>
+                  </button>
+                  <button class="opt" data-answer="bad" type="button">
+                    No guiado
+                    <small>En este caso el WiFi es no guiado: usa el espacio libre.</small>
+                  </button>
+                </div>
+                <div class="result ok" hidden>
+                  Correcto: un medio guiado necesita un cable o fibra; WiFi es el ejemplo típico de lo contrario.
+                </div>
+                <div class="result bad" hidden>
+                  El WiFi es un <b>medio no guiado</b>: las ondas viajan por el aire hasta el punto de acceso.
+                </div>
+              </div>
+            </div>
+            <div>
+              <figure>
+                <video
+                  class="only-screen"
+                  src="./video/medio/panorama.mp4"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                ></video>
+                <img
+                  class="only-print"
+                  src="./img/medios/panorama.png"
+                  alt="Esquema general de medios de transmisión guiados y no guiados"
+                />
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cobre 1: UTP/STP -->
+        <section>
+          <div class="kicker">Cobre</div>
+          <h2>UTP vs STP · Interior vs exterior</h2>
+          <div class="accent"></div>
+          <div class="card card-visual">
+            <div>
+              <h3 style="margin-top: 0">UTP (Unshielded Twisted Pair)</h3>
+              <ul>
+                <li class="fragment">
+                  Pares trenzados sin blindaje adicional → económico y fácil de instalar.
+                </li>
+                <li class="fragment">
+                  Muy usado en cableado horizontal (oficinas, laboratorios).
+                </li>
+                <li class="fragment">
+                  Distancia típica: hasta 100 m por segmento (dependiendo de la categoría).
+                </li>
+              </ul>
+              <div class="chip-row">
+                <span class="chip-sm">Cat5e · 1 Gbps</span>
+                <span class="chip-sm">Cat6 · 1–10 Gbps</span>
+                <span class="chip-sm">Cat6a · 10 Gbps</span>
+              </div>
+              <div class="quiz mini" data-quiz-id="utp-stp">
+                <div class="q">Para un laboratorio universitario estándar, ¿UTP Cat6 suele ser suficiente?</div>
+                <div class="opts">
+                  <button class="opt" data-answer="ok" type="button">
+                    Sí
+                    <small>Buen costo/rendimiento para 1 Gbps e incluso 10G a distancias cortas.</small>
+                  </button>
+                  <button class="opt" data-answer="bad" type="button">
+                    No, siempre STP
+                    <small>STP solo se justifica donde realmente hay mucho ruido eléctrico.</small>
+                  </button>
+                </div>
+                <div class="result ok" hidden>
+                  Correcto: UTP Cat6 es el estándar razonable para muchos laboratorios y oficinas.
+                </div>
+                <div class="result bad" hidden>
+                  STP agrega complejidad y costo; se usa donde el ambiente lo exige.
+                </div>
+              </div>
+            </div>
+            <div>
+              <figure>
+                <video
+                  class="only-screen"
+                  src="./video/medio/utp-stp.mp4"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                ></video>
+                <img
+                  class="only-print"
+                  src="./img/medios/utp-stp.png"
+                  alt="Ejemplo de par trenzado UTP y STP"
+                />
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cobre 2: cableado estructurado -->
+        <section>
+          <div class="kicker">Cobre</div>
+          <h2>Cableado estructurado: horizontal y vertical</h2>
+          <div class="accent"></div>
+          <div class="card">
+            <div class="cols">
+              <div>
+                <h3 style="margin-top: 0">Horizontal</h3>
+                <ul>
+                  <li class="fragment">
+                    Desde el <b>patch panel</b> del rack hasta la <b>toma de usuario</b>.
+                  </li>
+                  <li class="fragment">
+                    Cable normalmente UTP/FTP, escondido en ductos, bandejas o pisos técnicos.
+                  </li>
+                  <li class="fragment">
+                    Longitud máxima práctica: 90 m de cable permanente + 10 m de patch cords.
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="margin-top: 0">Vertical (backbone)</h3>
+                <ul>
+                  <li class="fragment">
+                    Une salas de comunicaciones entre pisos o edificios (racks principales).
+                  </li>
+                  <li class="fragment">
+                    Puede ser cobre de alta categoría o <b>fibra óptica</b> según distancia y capacidad.
+                  </li>
+                  <li class="fragment">
+                    Importante considerar mensajeros, bandejas y rutas ignífugas.
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <p class="mini" style="margin-top: 12px">
+              Buen diseño = menos improvisación con “parches” en terreno y menos sorpresas
+              en certificación.
+            </p>
+          </div>
+        </section>
+
+        <!-- Patch panel, patch cord, user cord -->
+        <section>
+          <div class="kicker">Cobre</div>
+          <h2>Patch panel, patch cord, user cord</h2>
+          <div class="accent"></div>
+          <div class="grid2">
+            <div class="card">
+              <ul>
+                <li class="fragment">
+                  <b>Patch panel</b>: donde terminan los cables horizontales; frontales RJ45,
+                  trasera con punch‑down (110 o similar).
+                </li>
+                <li class="fragment">
+                  <b>Patch cord</b>: cable corto desde patch panel al switch en el rack.
+                </li>
+                <li class="fragment">
+                  <b>User cord</b>: cable que va desde la roseta de pared al equipo del usuario.
+                </li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3 style="margin-top: 0">Buenas prácticas</h3>
+              <ul>
+                <li class="fragment">Etiquetar ambos extremos (rack y toma).</li>
+                <li class="fragment">
+                  Mantener curvas suaves; evitar aplastar cables en puertas o bandejas.
+                </li>
+                <li class="fragment">
+                  No mezclar categorías (Cat5e vs Cat6) en el mismo recorrido crítico.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- EIA/TIA 568 A/B -->
+        <section>
+          <div class="kicker">Estándares</div>
+          <h2>EIA/TIA 568 A y B · Cables derecho y cruzado</h2>
+          <div class="accent"></div>
+          <div class="grid2">
+            <div class="card">
+              <h3 style="margin-top: 0">Código de colores</h3>
+              <p>
+                4 pares de cobre → 8 conductores. Los estándares definen el
+                <b>orden</b> de esos colores en el conector RJ‑45.
+              </p>
+              <ul>
+                <li class="fragment">
+                  <b>568A</b>: verde en el par “principal”.
+                </li>
+                <li class="fragment">
+                  <b>568B</b>: naranja en el par “principal”.
+                </li>
+              </ul>
+              <p class="mini">
+                En un edificio típico se estandariza uno (A o B) y se
+                <b>mantiene siempre igual</b> en toda la instalación permanente.
+              </p>
+            </div>
+            <div class="card">
+              <h3 style="margin-top: 0">Derecho vs cruzado</h3>
+              <ul>
+                <li class="fragment">
+                  <b>Cable derecho</b>: mismo estándar en ambos extremos (A–A o B–B).
+                </li>
+                <li class="fragment">
+                  <b>Cable cruzado</b>: un extremo A, el otro B (intercambio TX/RX).
+                </li>
+                <li class="fragment">
+                  <b>Auto‑MDI/MDIX</b>: los switches modernos detectan y corrigen, por eso
+                  ya casi no fabricamos cables cruzados manualmente.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Fibra 1 -->
+        <section>
+          <div class="kicker">Fibra óptica</div>
+          <h2>Núcleo, índice de refracción y tipos de fibra</h2>
+          <div class="accent"></div>
+          <div class="card card-visual">
+            <div>
+              <h3 style="margin-top: 0">Estructura básica</h3>
+              <ul>
+                <li class="fragment">
+                  <b>Núcleo</b>: vidrio de alto índice de refracción donde viaja la luz.
+                </li>
+                <li class="fragment">
+                  <b>Revestimiento</b>: vidrio de menor índice → reflexión interna total.
+                </li>
+                <li class="fragment">
+                  <b>Recubrimiento</b>, refuerzo y cubierta → protegen mecánicamente la fibra.
+                </li>
+              </ul>
+              <h3 style="margin-top: 12px">Monomodo vs multimodo</h3>
+              <ul>
+                <li class="fragment">
+                  <b>Monomodo</b>: largas distancias y altas velocidades (backbone, ISP).
+                </li>
+                <li class="fragment">
+                  <b>Multimodo</b>: económica para distancias cortas en edificios y campus.
+                </li>
+              </ul>
+              <div class="quiz mini" data-quiz-id="fibra">
+                <div class="q">Para unir dos edificios separados por 8 km, ¿qué tipo de fibra usarías?</div>
+                <div class="opts">
+                  <button class="opt" data-answer="ok" type="button">
+                    Monomodo
+                    <small>Diseñada para largas distancias y enlaces de operador.</small>
+                  </button>
+                  <button class="opt" data-answer="bad" type="button">
+                    Multimodo
+                    <small>La dispersión modal la limita a distancias mucho menores.</small>
+                  </button>
+                </div>
+                <div class="result ok" hidden>
+                  Correcto: a esas distancias se usa típicamente fibra monomodo con ópticas adecuadas.
+                </div>
+                <div class="result bad" hidden>
+                  Multimodo está pensada para tramos cortos dentro de edificios o campus.
+                </div>
+              </div>
+            </div>
+            <div>
+              <figure>
+                <video
+                  class="only-screen"
+                  src="./video/medio/fibra.mp4"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                ></video>
+                <img
+                  class="only-print"
+                  src="./img/medios/fibra.png"
+                  alt="Representación visual de fibra óptica"
+                />
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <!-- Fibra 2: conectividad -->
+        <section>
+          <div class="kicker">Fibra óptica</div>
+          <h2>Pig tails, cabeceras, racks y multiplexación</h2>
+          <div class="accent"></div>
+          <div class="card">
+            <div class="timeline">
+              <div class="time-item fragment">
+                <div class="time-dot">1</div>
+                <div>
+                  <b>Pig tails</b>:
+                  tramos cortos de fibra con conector en un extremo para fusionar
+                  con la fibra del tendido.
+                </div>
+              </div>
+              <div class="time-item fragment">
+                <div class="time-dot">2</div>
+                <div>
+                  <b>Cabecera de fibra</b>:
+                  bandeja o panel en rack donde se organizan y protegen las fusiones
+                  y conectores.
+                </div>
+              </div>
+              <div class="time-item fragment">
+                <div class="time-dot">3</div>
+                <div>
+                  <b>Racks / gabinetes / bastidores</b>:
+                  alojan equipos activos, bandejas y gestión de patch cords.
+                </div>
+              </div>
+              <div class="time-item fragment">
+                <div class="time-dot">4</div>
+                <div>
+                  <b>Multiplexación en una hebra</b>:
+                  uso de distintas longitudes de onda (WDM) para enviar/recibir
+                  por la misma fibra.
+                </div>
+              </div>
+            </div>
+            <p class="mini" style="margin-top: 12px">
+              Palabras clave para certificación: <b>pérdidas por inserción</b>, <b>retorno</b>,
+              presupuesto de potencia.
+            </p>
+          </div>
+        </section>
+
+        <!-- Inalámbrico -->
+        <section>
+          <div class="kicker">Inalámbrico</div>
+          <h2>HF, microondas, satelital, WiFi y LoRa</h2>
+          <div class="accent"></div>
+          <div class="card card-visual">
+            <div>
+              <h3 style="margin-top: 0">HF, microondas y satelital</h3>
+              <ul>
+                <li class="fragment">
+                  <b>HF</b> y <b>microondas</b>: enlaces punto a punto de larga distancia (cerros, torres).
+                </li>
+                <li class="fragment">
+                  Requieren <b>línea de vista</b> y cuidado con el volumen de Fresnel y obstáculos.
+                </li>
+                <li class="fragment">
+                  <b>Satelital</b>: cobertura global donde no llega fibra, a costa de mayor latencia.
+                </li>
+              </ul>
+              <h3 style="margin-top: 10px">WiFi y LoRa</h3>
+              <ul>
+                <li class="fragment">
+                  <b>WiFi</b> (2.4 / 5 / 6 GHz): acceso local de alta velocidad para usuarios.
+                </li>
+                <li class="fragment">
+                  <b>LoRa / LoRaWAN</b>: baja velocidad pero <b>gran alcance</b> y muy bajo consumo,
+                  ideal para sensores IoT distribuidos.
+                </li>
+              </ul>
+              <div class="quiz mini" data-quiz-id="wifi-lora">
+                <div class="q">
+                  Para una red de sensores de humedad en un campo agrícola, ¿qué medio es más adecuado?
+                </div>
+                <div class="opts">
+                  <button class="opt" data-answer="bad" type="button">
+                    WiFi
+                    <small>Buena velocidad, pero poco alcance y alto consumo para sensores remotos.</small>
+                  </button>
+                  <button class="opt" data-answer="ok" type="button">
+                    LoRa
+                    <small>Pensada para enlaces largos y dispositivos que funcionan con baterías.</small>
+                  </button>
+                </div>
+                <div class="result ok" hidden>
+                  Correcto: LoRa/LoRaWAN se diseñó justamente para este tipo de escenarios IoT.
+                </div>
+                <div class="result bad" hidden>
+                  WiFi no escala bien en distancia ni consumo para cientos de sensores en campo abierto.
+                </div>
+              </div>
+            </div>
+            <div>
+              <figure>
+                <video
+                  class="only-screen"
+                  src="./video/medio/inalambricos.mp4"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                ></video>
+                <img
+                  class="only-print"
+                  src="./img/medios/inalambricos.png"
+                  alt="Representación de medios inalámbricos"
+                />
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <!-- Certificación -->
+        <section>
+          <div class="kicker">Certificación</div>
+          <h2>Certificar un punto de red</h2>
+          <div class="accent"></div>
+          <div class="card">
+            <div class="cols">
+              <div>
+                <h3 style="margin-top: 0">Qué verifica el certificador</h3>
+                <ul>
+                  <li class="fragment">Continuidad y orden correcto de pares.</li>
+                  <li class="fragment">Longitud del enlace y atenuación.</li>
+                  <li class="fragment">
+                    Crosstalk, NEXT, retornos y parámetros según la categoría.
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="margin-top: 0">Por qué importa</h3>
+                <ul>
+                  <li class="fragment">
+                    Permite <b>garantizar velocidad</b> (ej. que una toma soporte 1 Gbps).
+                  </li>
+                  <li class="fragment">
+                    Es el respaldo frente a proveedores e instaladores.
+                  </li>
+                  <li class="fragment">
+                    Ahorra horas de troubleshooting: “el enlace está certificado o no”.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Taller RJ-45 -->
+        <section>
+          <div class="kicker">Taller</div>
+          <h2>Armado de cables RJ‑45</h2>
+          <div class="accent"></div>
+          <div class="card">
+            <ol>
+              <li class="fragment">
+                <b>Preparar el cable</b>:
+                retirar camisa externa con la crimpadora, sin dañar pares.
+              </li>
+              <li class="fragment">
+                <b>Ordenar colores</b> según 568A o 568B (según estándar definido).
+              </li>
+              <li class="fragment">
+                <b>Alinear y cortar</b> todos los conductores al mismo largo.
+              </li>
+              <li class="fragment">
+                <b>Insertar en el conector RJ‑45</b> verificando que lleguen hasta el fondo
+                y que la camisa entre ligeramente.
+              </li>
+              <li class="fragment">
+                <b>Crimpar</b> con la herramienta y repetir en el otro extremo.
+              </li>
+              <li class="fragment">
+                <b>Probar</b> con tester de cable o certificador.
+              </li>
+            </ol>
+            <p class="mini" style="margin-top: 12px">
+              Mostrar en vivo: <b>crimpadora</b>, conectores, cable UTP y tester.
+              Ideal que cada equipo arme al menos un cable funcional.
+            </p>
+          </div>
+        </section>
+
+        <!-- Mini-quiz -->
+        <section>
+          <div class="kicker">Mini‑quiz</div>
+          <h2>¿Qué medio elegirías?</h2>
+          <div class="accent"></div>
+          <div class="grid2">
+            <div class="card quiz">
+              <div class="q">
+                Necesitas unir dos pisos del mismo edificio con alta demanda de tráfico
+                y proyección a 10 Gbps. ¿Qué escogerías como backbone?
+              </div>
+              <div class="opts">
+                <button class="opt" data-answer="bad" type="button">
+                  UTP Cat5e horizontal
+                  <small>Funciona para 1 Gbps, pero no es ideal como backbone a futuro.</small>
+                </button>
+                <button class="opt" data-answer="ok" type="button">
+                  Fibra óptica multimodo entre racks
+                  <small>Permite altas velocidades y distancias típicas de edificio.</small>
+                </button>
+                <button class="opt" data-answer="bad" type="button">
+                  WiFi 2.4 GHz entre AP de cada piso
+                  <small>Mucho overhead y poca previsibilidad para backbone.</small>
+                </button>
+                <button class="opt" data-answer="bad" type="button">
+                  Par trenzado exterior colgando por la fachada
+                  <small>Problemas mecánicos, normativos y de interferencias.</small>
+                </button>
+              </div>
+              <div id="resOk" class="result">
+                Correcto: un backbone en fibra multimodo (o monomodo según diseño)
+                da margen para crecer en velocidad y distancia con buena inmunidad a
+                interferencias.
+              </div>
+              <div id="resBad" class="result">
+                Casi. Para backbone entre pisos lo profesional es usar
+                <b>fibra óptica</b>, dejando el cobre para el cableado horizontal.
+              </div>
+            </div>
+            <div class="card">
+              <div class="pill">Checklist rápido</div>
+              <ul style="margin-top: 12px">
+                <li class="fragment"><b>Distancia</b> máxima del enlace.</li>
+                <li class="fragment"><b>Ancho de banda</b> requerido hoy y a 5 años.</li>
+                <li class="fragment"><b>Ambiente</b>: ruido eléctrico, intemperie, ductos.</li>
+                <li class="fragment"><b>Presupuesto</b>: CAPEX vs OPEX (mantención).</li>
+                <li class="fragment"><b>Normativa</b> y certificación que se exigirá.</li>
+              </ul>
+              <p class="mini" style="margin-top: 10px">
+                Usa este checklist para cualquier diseño o caso práctico del curso.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quiz final de 10 preguntas -->
+        <section>
+          <div class="kicker">Evaluación rápida</div>
+          <h2>Quiz de medios de transmisión</h2>
+          <div class="accent"></div>
+          <div class="card mega-quiz">
+            <div class="mq-list" id="mega-quiz">
+              <!-- 1 -->
+              <div class="mq-question" data-correct="b">
+                <div class="mq-qtext">1. ¿Qué medio es más adecuado para el backbone entre dos pisos del mismo edificio con alta demanda?</div>
+                <div class="mq-options">
+                  <div class="mq-option" data-id="a">a) UTP Cat5e horizontal</div>
+                  <div class="mq-option" data-id="b">b) Fibra óptica multimodo entre racks</div>
+                  <div class="mq-option" data-id="c">c) WiFi de 2.4 GHz</div>
+                </div>
+                <div class="mq-feedback"></div>
+              </div>
+              <!-- 2 -->
+              <div class="mq-question" data-correct="c">
+                <div class="mq-qtext">2. ¿Cuál es la longitud típica máxima de un enlace de cobre permanente en cableado estructurado?</div>
+                <div class="mq-options">
+                  <div class="mq-option" data-id="a">a) 30 m</div>
+                  <div class="mq-option" data-id="b">b) 60 m</div>
+                  <div class="mq-option" data-id="c">c) 90 m + 10 m de patch cords</div>
+                </div>
+                <div class="mq-feedback"></div>
+              </div>
+              <!-- 3 -->
+              <div class="mq-question" data-correct="a">
+                <div class="mq-qtext">3. ¿Qué estándar define el orden de colores para terminar un conector RJ‑45?</div>
+                <div class="mq-options">
+                  <div class="mq-option" data-id="a">a) EIA/TIA‑568 A/B</div>
+                  <div class="mq-option" data-id="b">b) IEEE 802.1Q</div>
+                  <div class="mq-option" data-id="c">c) RFC 1918</div>
+                </div>
+                <div class="mq-feedback"></div>
+              </div>
+              <!-- 4 -->
+              <div class="mq-question" data-correct="b">
+                <div class="mq-qtext">4. Para un ambiente industrial con mucho ruido eléctrico, ¿qué tipo de cobre prefieres?</div>
+                <div class="mq-options">
+                  <div class="mq-option" data-id="a">a) UTP Cat5e</div>
+                  <div class="mq-option" data-id="b">b) STP con buen sistema de tierra</div>
+                  <div class="mq-option" data-id="c">c) Cable telefónico plano</div>
+                </div>
+                <div class="mq-feedback"></div>
+              </div>
+              <!-- 5 -->
+              <div class="mq-question" data-correct="c">
+                <div class="mq-qtext">5. ¿Qué característica destaca a la fibra monomodo frente a la multimodo?</div>
+                <div class="mq-options">
+                  <div class="mq-option" data-id="a">a) Menor distancia soportada</div>
+                  <div class="mq-option" data-id="b">b) Más barata para tramos cortos</div>
+                  <div class="mq-option" data-id="c">c) Mayor distancia y velocidades con un solo modo de luz</div>
+                </div>
+                <div class="mq-feedback"></div>
+              </div>
+              <!-- 6 -->
+              <div class="mq-question" data-correct="a">
+                <div class="mq-qtext">6. ¿Qué medio es típicamente no guiado?</div>
+                <div class="mq-options">
+                  <div class="mq-option" data-id="a">a) Enlace WiFi entre notebook y AP</div>
+                  <div class="mq-option" data-id="b">b) Par trenzado Cat6</div>
+                  <div class="mq-option" data-id="c">c) Fibra óptica multimodo</div>
+                </div>
+                <div class="mq-feedback"></div>
+              </div>
+              <!-- 7 -->
+              <div class="mq-question" data-correct="b">
+                <div class="mq-qtext">7. ¿Para qué sirve principalmente un patch panel?</div>
+                <div class="mq-options">
+                  <div class="mq-option" data-id="a">a) Para alimentar equipos PoE</div>
+                  <div class="mq-option" data-id="b">b) Para terminar y organizar los cables horizontales en el rack</div>
+                  <div class="mq-option" data-id="c">c) Para amplificar la señal del switch</div>
+                </div>
+                <div class="mq-feedback"></div>
+              </div>
+              <!-- 8 -->
+              <div class="mq-question" data-correct="c">
+                <div class="mq-qtext">8. Un cable cruzado tradicionalmente se armaba para conectar…</div>
+                <div class="mq-options">
+                  <div class="mq-option" data-id="a">a) Un PC con un switch</div>
+                  <div class="mq-option" data-id="b">b) Un switch con un router</div>
+                  <div class="mq-option" data-id="c">c) Dos equipos del mismo tipo (ej. PC–PC o switch–switch)</div>
+                </div>
+                <div class="mq-feedback"></div>
+              </div>
+              <!-- 9 -->
+              <div class="mq-question" data-correct="a">
+                <div class="mq-qtext">9. ¿Qué mide un certificador de cableado de cobre?</div>
+                <div class="mq-options">
+                  <div class="mq-option" data-id="a">a) Continuidad, longitud, atenuación y parámetros como NEXT</div>
+                  <div class="mq-option" data-id="b">b) Solo si hay enlace a 100 Mbps</div>
+                  <div class="mq-option" data-id="c">c) La configuración IP del equipo</div>
+                </div>
+                <div class="mq-feedback"></div>
+              </div>
+              <!-- 10 -->
+              <div class="mq-question" data-correct="b">
+                <div class="mq-qtext">10. Para una red de sensores IoT de baja velocidad en un campo agrícola, el medio más razonable es…</div>
+                <div class="mq-options">
+                  <div class="mq-option" data-id="a">a) WiFi 6E</div>
+                  <div class="mq-option" data-id="b">b) LoRa / LoRaWAN</div>
+                  <div class="mq-option" data-id="c">c) UTP Cat7 enterrado hasta cada sensor</div>
+                </div>
+                <div class="mq-feedback"></div>
+              </div>
+            </div>
+            <div class="cols">
+              <div>
+                <h3 style="margin-top: 0">Cómo usar este quiz</h3>
+                <ul>
+                  <li>Los estudiantes responden levantando mano o en voz alta.</li>
+                  <li>Luego haces clic en la alternativa elegida para marcarla.</li>
+                  <li>Si es correcta se pintará en <b>verde</b>; si es incorrecta, en <b>rojo</b> y se indicará la correcta.</li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="margin-top: 0">Tip</h3>
+                <p class="mini">
+                  Puedes volver a usar este quiz al final de la unidad o como repaso rápido antes de una evaluación formal.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cierre -->
+        <section>
+          <div class="kicker">Cierre</div>
+          <h2>Resumen 3‑2‑1 de medios</h2>
+          <div class="accent"></div>
+          <div class="card">
+            <div class="cols">
+              <div>
+                <h3 style="margin-top: 0">3 ideas clave</h3>
+                <ul>
+                  <li class="fragment">
+                    Cobre, fibra e inalámbrico tienen <b>ventajas y límites</b>
+                    claros (distancia, velocidad, ambiente).
+                  </li>
+                  <li class="fragment">
+                    EIA/TIA 568 y la certificación te dan un lenguaje profesional
+                    con instaladores y proveedores.
+                  </li>
+                  <li class="fragment">
+                    Saber armar y probar un cable RJ‑45 es
+                    <b>habilidad básica de terreno</b>.
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="margin-top: 0">2 preguntas · 1 desafío</h3>
+                <ul>
+                  <li class="fragment">
+                    ¿Qué medio usarías para tu casa, tu facultad y un ISP?
+                  </li>
+                  <li class="fragment">
+                    ¿Qué parámetros revisarías primero ante un problema de “no navega”?
+                  </li>
+                </ul>
+                <div class="callout fragment" style="margin-top: 10px">
+                  Desafío: documenta con fotos el <b>cableado real</b> de un lugar
+                  que conozcas (casa, oficina, laboratorio) e identifica
+                  qué se está haciendo bien y qué empeoraría la certificación.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        center: true,
+        transition: "slide",
+        slideNumber: "h",
+        width: 1280,
+        height: 720,
+        margin: 0.08,
+        plugins: [RevealNotes],
+      });
+
+      const btnPdf = document.getElementById("btnPdf");
+      btnPdf?.addEventListener("click", () => {
+        const url = new URL(window.location.href);
+        url.searchParams.set("print-pdf", "true");
+        window.open(url.toString(), "_blank");
+      });
+
+      const btnHelp = document.getElementById("btnHelp");
+      btnHelp?.addEventListener("click", () => {
+        alert(
+          [
+            "Atajos:",
+            "→ / Espacio: siguiente",
+            "←: anterior",
+            "S: notas del presentador",
+            "",
+            "PDF:",
+            "Pulsa 'PDF Exportar', luego usa Imprimir → Guardar como PDF.",
+          ].join("\n")
+        );
+      });
+
+      // Quiz final de 10 preguntas: colorea correcta/incorrecta e indica la respuesta
+      document.querySelectorAll("#mega-quiz .mq-question").forEach((qEl) => {
+        const correctId = qEl.getAttribute("data-correct");
+        const options = qEl.querySelectorAll(".mq-option");
+        const feedback = qEl.querySelector(".mq-feedback");
+        options.forEach((opt) => {
+          opt.addEventListener("click", () => {
+            const chosen = opt.getAttribute("data-id");
+            options.forEach((o) => o.classList.remove("correct", "incorrect"));
+            if (chosen === correctId) {
+              opt.classList.add("correct");
+              if (feedback) {
+                feedback.textContent = "Correcto ✅";
+              }
+            } else {
+              opt.classList.add("incorrect");
+              const correctOpt = Array.from(options).find(
+                (o) => o.getAttribute("data-id") === correctId
+              );
+              if (correctOpt && feedback) {
+                feedback.textContent =
+                  "Incorrecto. La respuesta correcta es: " + correctOpt.textContent.trim();
+              }
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
+
